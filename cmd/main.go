@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/Rev1nant/go-book-db/configs"
-	"github.com/Rev1nant/go-book-db/internal/repository"
+	"github.com/Rev1nant/go-book-db/internal/server"
 	"github.com/Rev1nant/go-book-db/pkg/datebase"
 )
 
@@ -14,7 +12,10 @@ func main() {
 	db := datebase.NewDB(dsn)
 	defer db.DB.Close()
 
-	repo := repository.NewRepositories(db)
+	// repo := repository.NewRepositories(db)
 
-	fmt.Println(repo.Genre.GetAllGenre())
+	// http.HandleFunc("/book", service)
+
+	server := server.Server{}
+	server.Run("8080")
 }
