@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	"github.com/Rev1nant/go-book-db/internal/domain"
+	"github.com/Rev1nant/go-book-db/internal/model"
 	"github.com/Rev1nant/go-book-db/pkg/datebase"
 )
 
@@ -17,30 +17,30 @@ func NewBookRepo(db *datebase.DB) *BookRepo {
 	}
 }
 
-func (r *BookRepo) GetAllBook() ([]domain.Book, error) {
-	rows, err := r.db.DB.Query(`SELECT book_id, title, author_id, firstname_author, lastname_author, price, amount FROM book INNER JOIN author USING(author_id)`)
+func (r *BookRepo) GetAllBook() ([]model.Book, error) {
+	rows, err := r.db.DB.Query(`SELECT title, firstname_author, lastname_author, price, amount FROM book INNER JOIN author USING(author_id)`)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	books := []domain.Book{}
+	books := []model.Book{}
 	for rows.Next() {
-		book := domain.Book{}
-		err = rows.Scan(&book.BookID, &book.Title, &book.Author.AuthorID, &book.Author.FirstName, &book.Author.LastName, &book.Price, &book.Amount)
+		book := model.Book{}
+		err = rows.Scan(&book.Title, &book.Author.FirstName, &book.Author.LastName, &book.Price, &book.Amount)
 		if err != nil {
 			log.Println(err)
 		}
-		row, err := r.db.DB.Query(`SELECT genre_id, name_genre FROM genre INNER JOIN book_genre USING(genre_id) WHERE book_id = $1;`, book.BookID)
+		row, err := r.db.DB.Query(`SELECT name_genre FROM genre INNER JOIN book_genre USING(genre_id) INNER JOIN book USING(book_id) INNER JOIN author USING(author_id) WHERE title = $1, firstname_author = $2, lastname_author = $3 ;`, book.Title, book.Author.FirstName, book.Author.LastName)
 		if err != nil {
 			return nil, err
 		}
 		defer row.Close()
 
-		genres := []domain.Genre{}
+		genres := []model.Genre{}
 		for row.Next() {
-			genre := domain.Genre{}
-			err = row.Scan(&genre.GenreID, &genre.NameGenre)
+			genre := model.Genre{}
+			err = row.Scan(&genre.NameGenre)
 			if err != nil {
 				log.Println(err)
 			}
@@ -54,28 +54,28 @@ func (r *BookRepo) GetAllBook() ([]domain.Book, error) {
 	return books, nil
 }
 
-func (r *BookRepo) GetOneBook(id int) (domain.Book, error) {
-	rows, err := r.db.DB.Query(`SELECT book_id, title, author_id, firstname_author, lastname_author, price, amount FROM book INNER JOIN author USING(author_id) WHERE book_id = $1`, id)
+func (r *BookRepo) GetOneBook(id int) (model.Book, error) {
+	rows, err := r.db.DB.Query(`SELECT title, firstname_author, lastname_author, price, amount FROM book INNER JOIN author USING(author_id) WHERE book_id = $1`, id)
 	if err != nil {
-		return domain.Book{}, err
+		return model.Book{}, err
 	}
 	defer rows.Close()
 
-	book := domain.Book{}
+	book := model.Book{}
 	rows.Next()
-	err = rows.Scan(&book.BookID, &book.Title, &book.Author.AuthorID, &book.Author.FirstName, &book.Author.LastName, &book.Price, &book.Amount)
+	err = rows.Scan(&book.Title, &book.Author.FirstName, &book.Author.LastName, &book.Price, &book.Amount)
 	if err != nil {
 		log.Println(err)
 	}
 	row, err := r.db.DB.Query(`SELECT name_genre FROM genre INNER JOIN book_genre USING(genre_id) WHERE book_id = $1;`, id)
 	if err != nil {
-		return domain.Book{}, err
+		return model.Book{}, err
 	}
 
-	genres := []domain.Genre{}
+	genres := []model.Genre{}
 	for row.Next() {
-		genre := domain.Genre{}
-		err = row.Scan(&genre.GenreID, &genre.NameGenre)
+		genre := model.Genre{}
+		err = row.Scan(&genre.NameGenre)
 		if err != nil {
 			log.Println(err)
 		}
@@ -86,8 +86,8 @@ func (r *BookRepo) GetOneBook(id int) (domain.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepo) AddBook(title string, authorID int, price float64, amount int) error {
-	_, err := r.db.DB.Exec(`INSERT INTO book (title, author_id, price, amount) VALUES ($1, $2, $3, $4);`, title, authorID, price, amount)
+func (r *BookRepo) AddBook(book model.Book, authorID int) error {
+	_, err := r.db.DB.Exec(`INSERT INTO book (title, author_id, price, amount) VALUES ($1, $2, $3, $4);`, book.Title, authorID, book.Price, book.Amount)
 	if err != nil {
 		return err
 	}
@@ -104,8 +104,8 @@ func (r *BookRepo) AddBookGenre(bookID, genreID int) error {
 	return nil
 }
 
-func (r *BookRepo) UpdateBook(id int, title string, authorID int, price float64, amount int) error {
-	_, err := r.db.DB.Exec(`UPDATE book SET title = $1, author_id = $2, price = $3, amount = $4 WHERE book_id = $5`, title, authorID, price, amount, id)
+func (r *BookRepo) UpdateBook(book model.Book, authorID, bookID int) error {
+	_, err := r.db.DB.Exec(`UPDATE book SET title = $1, author_id = $2, price = $3, amount = $4 WHERE book_id = $5`, book.Title, authorID, book.Price, book.Amount, bookID)
 	if err != nil {
 		return err
 	}
