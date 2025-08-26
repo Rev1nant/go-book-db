@@ -7,30 +7,30 @@ import (
 )
 
 type Author interface {
-	GetAllAuthor() ([]model.Author, error)
-	GetOneAuthor(id int) (model.Author, error)
-	AddAuthor(author model.Author) error
-	UpdateAuthor(id int, author model.Author) error
-	DeleteAuthor(id int) error
+	FindAll() ([]model.Author, error)
+	FindByID(id int) (model.Author, error)
+	Create(author model.Author) error
+	Update(id int, author model.Author) error
+	Delete(id int) error
 }
 
 type Genre interface {
-	GetAllGenre() ([]model.Genre, error)
-	GetOneGenre(id int) (model.Genre, error)
-	AddGenre(genre model.Genre) error
-	UpdateGenre(id int, genre model.Genre) error
-	DeleteGenre(id int) error
+	FindAll() ([]model.Genre, error)
+	FindByID(id int) (model.Genre, error)
+	Create(genre model.Genre) error
+	Update(id int, genre model.Genre) error
+	Delete(id int) error
 }
 
 type Book interface {
-	GetAllBook() ([]model.Book, error)
-	GetOneBook(id int) (model.Book, error)
-	AddBook(book model.Book, authorID int) error
-	AddBookGenre(bookID, genreID int) error
-	UpdateBook(book model.Book, authorID, bookID int) error
-	UpdateBookGenre(bookGenreID, genreID int) error
-	DeleteBook(id int) error
-	DeleteBookGenre(bookGenreID int) error
+	FindAll() ([]model.Book, error)
+	FindByID(id int) (model.Book, error)
+	Create(book model.Book, authorID int) error
+	AddGenre(bookID, genreID int) error
+	Update(book model.Book, authorID, bookID int) error
+	UpdateGenre(bookGenreID, genreID int) error
+	Delete(id int) error
+	DeleteGenre(bookGenreID int) error
 }
 
 type Repositories struct {

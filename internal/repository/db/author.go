@@ -17,7 +17,7 @@ func NewAuthorRepo(db *datebase.DB) *AuthorRepo {
 	}
 }
 
-func (r *AuthorRepo) GetAllAuthor() ([]model.Author, error) {
+func (r *AuthorRepo) FindAll() ([]model.Author, error) {
 	rows, err := r.db.DB.Query(`SELECT firstname_author, lastname_author FROM author`)
 	if err != nil {
 		return nil, err
@@ -38,7 +38,7 @@ func (r *AuthorRepo) GetAllAuthor() ([]model.Author, error) {
 	return authors, nil
 }
 
-func (r *AuthorRepo) GetOneAuthor(id int) (model.Author, error) {
+func (r *AuthorRepo) FindByID(id int) (model.Author, error) {
 	row, err := r.db.DB.Query(`SELECT firstname_author, lastname_author FROM author WHERE author_id = $1`, id)
 	if err != nil {
 		return model.Author{}, err
@@ -55,7 +55,7 @@ func (r *AuthorRepo) GetOneAuthor(id int) (model.Author, error) {
 	return author, nil
 }
 
-func (r *AuthorRepo) AddAuthor(author model.Author) error {
+func (r *AuthorRepo) Create(author model.Author) error {
 	_, err := r.db.DB.Exec(`INSERT INTO author (firstname_author, lastname_author) VALUES ($1, $2)`, author.FirstName, author.LastName)
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (r *AuthorRepo) AddAuthor(author model.Author) error {
 	return nil
 }
 
-func (r *AuthorRepo) UpdateAuthor(id int, author model.Author) error {
+func (r *AuthorRepo) Update(id int, author model.Author) error {
 	_, err := r.db.DB.Exec(`UPDATE author SET firstname_author = $1, lastname_author = $2 WHERE author_id = $3`, author.FirstName, author.LastName, id)
 	if err != nil {
 		return err
@@ -73,7 +73,7 @@ func (r *AuthorRepo) UpdateAuthor(id int, author model.Author) error {
 	return nil
 }
 
-func (r *AuthorRepo) DeleteAuthor(id int) error {
+func (r *AuthorRepo) Delete(id int) error {
 	_, err := r.db.DB.Exec(`DELETE FROM author WHERE author_id = $1`, id)
 	if err != nil {
 		return err

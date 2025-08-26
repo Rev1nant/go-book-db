@@ -17,7 +17,7 @@ func NewGenreRepo(db *datebase.DB) *GenreRepo {
 	}
 }
 
-func (r *GenreRepo) GetAllGenre() ([]model.Genre, error) {
+func (r *GenreRepo) FindAll() ([]model.Genre, error) {
 	rows, err := r.db.DB.Query(`SELECT name_genre FROM genre`)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (r *GenreRepo) GetAllGenre() ([]model.Genre, error) {
 	return genres, nil
 }
 
-func (r *GenreRepo) GetOneGenre(id int) (model.Genre, error) {
+func (r *GenreRepo) FindByID(id int) (model.Genre, error) {
 	rows, err := r.db.DB.Query(`SELECT name_genre FROM genre WHERE genre_id = $1`, id)
 	if err != nil {
 		return model.Genre{}, err
@@ -54,7 +54,7 @@ func (r *GenreRepo) GetOneGenre(id int) (model.Genre, error) {
 	return genre, nil
 }
 
-func (r *GenreRepo) AddGenre(genre model.Genre) error {
+func (r *GenreRepo) Create(genre model.Genre) error {
 	_, err := r.db.DB.Exec(`INSERT INTO genre (name_genre) VALUES ($1);`, genre.NameGenre)
 	if err != nil {
 		return err
@@ -63,7 +63,7 @@ func (r *GenreRepo) AddGenre(genre model.Genre) error {
 	return nil
 }
 
-func (r *GenreRepo) UpdateGenre(id int, genre model.Genre) error {
+func (r *GenreRepo) Update(id int, genre model.Genre) error {
 	_, err := r.db.DB.Exec(`UPDATE genre SET name_genre = $1 WHERE genre_id = $2`, genre.NameGenre, id)
 	if err != nil {
 		return err
@@ -72,7 +72,7 @@ func (r *GenreRepo) UpdateGenre(id int, genre model.Genre) error {
 	return nil
 }
 
-func (r *GenreRepo) DeleteGenre(id int) error {
+func (r *GenreRepo) Delete(id int) error {
 	_, err := r.db.DB.Exec(`DELETE FROM genre WHERE genre_id = $1`, id)
 	if err != nil {
 		return err
