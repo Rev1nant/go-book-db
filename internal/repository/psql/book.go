@@ -1,17 +1,17 @@
-package db
+package psql
 
 import (
 	"log"
 
 	"github.com/Rev1nant/go-book-db/internal/model"
-	"github.com/Rev1nant/go-book-db/pkg/datebase"
+	"github.com/Rev1nant/go-book-db/pkg/db"
 )
 
 type BookRepo struct {
-	db datebase.DB
+	db db.DB
 }
 
-func NewBookRepo(db *datebase.DB) *BookRepo {
+func NewBookRepo(db *db.DB) *BookRepo {
 	return &BookRepo{
 		db: *db,
 	}

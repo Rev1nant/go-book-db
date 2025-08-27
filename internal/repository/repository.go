@@ -2,8 +2,8 @@ package repository
 
 import (
 	"github.com/Rev1nant/go-book-db/internal/model"
-	"github.com/Rev1nant/go-book-db/internal/repository/db"
-	"github.com/Rev1nant/go-book-db/pkg/datebase"
+	"github.com/Rev1nant/go-book-db/internal/repository/psql"
+	"github.com/Rev1nant/go-book-db/pkg/db"
 )
 
 type Author interface {
@@ -39,10 +39,10 @@ type Repositories struct {
 	Book   Book
 }
 
-func NewRepositories(database *datebase.DB) *Repositories {
+func NewRepositories(db *db.DB) *Repositories {
 	return &Repositories{
-		Author: db.NewAuthorRepo(database),
-		Genre:  db.NewGenreRepo(database),
-		Book:   db.NewBookRepo(database),
+		Author: psql.NewAuthorRepo(db),
+		Genre:  psql.NewGenreRepo(db),
+		Book:   psql.NewBookRepo(db),
 	}
 }

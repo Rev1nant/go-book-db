@@ -1,17 +1,17 @@
-package db
+package psql
 
 import (
 	"log"
 
 	"github.com/Rev1nant/go-book-db/internal/model"
-	"github.com/Rev1nant/go-book-db/pkg/datebase"
+	"github.com/Rev1nant/go-book-db/pkg/db"
 )
 
 type GenreRepo struct {
-	db datebase.DB
+	db db.DB
 }
 
-func NewGenreRepo(db *datebase.DB) *GenreRepo {
+func NewGenreRepo(db *db.DB) *GenreRepo {
 	return &GenreRepo{
 		db: *db,
 	}
