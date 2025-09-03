@@ -39,17 +39,17 @@ func (r *AuthorRepo) FindAll() ([]model.Author, error) {
 }
 
 func (r *AuthorRepo) FindByID(id int) (model.Author, error) {
-	row, err := r.db.DB.Query(`SELECT firstname_author, lastname_author FROM author WHERE author_id = $1`, id)
+	rows, err := r.db.DB.Query(`SELECT firstname_author, lastname_author FROM author WHERE author_id = $1`, id)
 	if err != nil {
 		return model.Author{}, err
 	}
-	defer row.Close()
+	defer rows.Close()
 
 	author := model.Author{}
-	row.Next()
-	err = row.Scan(&author.FirstName, &author.LastName)
+	rows.Next()
+	err = rows.Scan(&author.FirstName, &author.LastName)
 	if err != nil {
-		log.Println(err)
+		return author, err
 	}
 
 	return author, nil
