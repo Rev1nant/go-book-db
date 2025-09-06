@@ -81,3 +81,21 @@ func (r *AuthorRepo) Delete(id int) error {
 
 	return nil
 }
+
+func (r *AuthorRepo) GetAuthorID(author model.Author) (int, error) {
+	row, err := r.db.DB.Query(`SELECT author_id FROM author WHERE firstname_author = $1 AND lastname_author = $2`, author.FirstName, author.LastName)
+	if err != nil {
+		return 0, err
+	}
+
+	defer row.Close()
+
+	var authorID int
+	row.Next()
+	err = row.Scan(&authorID)
+	if err != nil {
+		return 0, err
+	}
+
+	return authorID, nil
+}

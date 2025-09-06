@@ -12,6 +12,7 @@ type Author interface {
 	Create(author model.Author) error
 	Update(id int, author model.Author) error
 	Delete(id int) error
+	GetAuthorID(author model.Author) (int, error)
 }
 
 type Genre interface {
@@ -31,7 +32,7 @@ type Book interface {
 	Update(book model.Book, authorID, bookID int) error
 	UpdateGenre(bookGenreID, genreID int) error
 	Delete(id int) error
-	DeleteGenre(bookGenreID int) error
+	DeleteGenre(bookID, genreID int) error
 	GetBookID(title string, author model.Author) (int, error)
 }
 

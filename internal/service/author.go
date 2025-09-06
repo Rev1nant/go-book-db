@@ -34,3 +34,7 @@ func (s *AuthorService) UpdateAuthor(id int, author model.Author) error {
 func (s *AuthorService) DeleteAuthor(id int) error {
 	return s.repo.Author.Delete(id)
 }
+
+func (s *AuthorService) GetAuthorID(author model.Author) (int, error) {
+	return s.repo.Author.GetAuthorID(author)
+}

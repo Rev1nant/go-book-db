@@ -93,7 +93,7 @@ DROP TABLE book_genre, book, genre, author;
 `DELETE from book WHERE book_id = $1`, id
 
 /*Delete genre book*/
-`DELETE FROM book_genre WHERE book_genre_id = $1`, bookGenreID
+`DELETE FROM book_genre WHERE bookID = $1 AND genreID = $2`, bookID, genreID
 
 
 

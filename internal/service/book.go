@@ -43,8 +43,8 @@ func (s *BookService) DeleteBook(id int) error {
 	return s.repo.Book.Delete(id)
 }
 
-func (s *BookService) DeleteBookGenre(bookGenreID int) error {
-	return s.repo.Book.DeleteGenre(bookGenreID)
+func (s *BookService) DeleteBookGenre(bookID, genreID int) error {
+	return s.repo.Book.DeleteGenre(bookID, genreID)
 }
 
 func (s *BookService) GetBookID(title string, author model.Author) (int, error) {

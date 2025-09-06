@@ -131,8 +131,8 @@ func (r *BookRepo) Delete(id int) error {
 	return nil
 }
 
-func (r *BookRepo) DeleteGenre(bookGenreID int) error {
-	_, err := r.db.DB.Exec(`DELETE FROM book_genre WHERE book_genre_id = $1`, bookGenreID)
+func (r *BookRepo) DeleteGenre(bookID, genreID int) error {
+	_, err := r.db.DB.Exec(`DELETE FROM book_genre WHERE bookID = $1 AND genreID = $2`, bookID, genreID)
 	if err != nil {
 		return err
 	}

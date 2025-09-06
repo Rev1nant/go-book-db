@@ -10,14 +10,16 @@ import (
 )
 
 type BookHandlers struct {
-	BookService  service.Book
-	GenreService service.Genre
+	BookService   service.Book
+	GenreService  service.Genre
+	AuthorService service.Author
 }
 
 func NewBookHandler(router *http.ServeMux, deps BookHandlers) {
 	handler := &BookHandlers{
-		BookService:  deps.BookService,
-		GenreService: deps.GenreService,
+		BookService:   deps.BookService,
+		GenreService:  deps.GenreService,
+		AuthorService: deps.AuthorService,
 	}
 
 	router.Handle("GET /book", handler.GetAllBook())
@@ -106,24 +108,102 @@ func (handler *BookHandlers) AddBookGenre() http.HandlerFunc {
 
 func (handler *BookHandlers) UpdateBook() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		bookID, err := req.GetId(&w, r)
+		if err != nil {
+			return
+		}
 
+		body, err := req.Body[model.Book](&w, r)
+		if err != nil {
+			return
+		}
+
+		authorID, err := handler.AuthorService.GetAuthorID(body.Author)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		err = handler.BookService.UpdateBook(*body, authorID, bookID)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		res.Json(w, "ok", http.StatusOK)
 	}
 }
 
 func (handler *BookHandlers) UpdateBookGenre() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		bookID, err := req.GetId(&w, r)
+		if err != nil {
+			return
+		}
 
+		body, err := req.Body[model.Genre](&w, r)
+		if err != nil {
+			return
+		}
+
+		gerneID, err := handler.GenreService.GetGenreID(body.NameGenre)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		err = handler.BookService.AddBookGenre(bookID, gerneID)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		res.Json(w, "ok", http.StatusOK)
 	}
 }
 
 func (handler *BookHandlers) DeleteBook() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		bookID, err := req.GetId(&w, r)
+		if err != nil {
+			return
+		}
 
+		err = handler.BookService.DeleteBook(bookID)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		res.Json(w, "ok", http.StatusOK)
 	}
 }
 
 func (handler *BookHandlers) DeleteBookGenre() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		bookID, err := req.GetId(&w, r)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
 
+		body, err := req.Body[model.Genre](&w, r)
+		if err != nil {
+			return
+		}
+
+		genreID, err := handler.GenreService.GetGenreID(body.NameGenre)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		err = handler.BookService.DeleteBookGenre(bookID, genreID)
+		if err != nil {
+			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
+		}
+
+		res.Json(w, "ok", http.StatusOK)
 	}
 }
