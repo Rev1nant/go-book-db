@@ -19,17 +19,19 @@ type Genre interface {
 	AddGenre(genre model.Genre) error
 	UpdateGenre(id int, genre model.Genre) error
 	DeleteGenre(id int) error
+	GetGenreID(genreName string) (int, error)
 }
 
 type Book interface {
 	GetAllBook() ([]model.Book, error)
 	GetOneBook(id int) (model.Book, error)
-	AddBook(book model.Book, authorID int) error
+	AddBook(book model.Book) error
 	AddBookGenre(bookID, genreID int) error
 	UpdateBook(book model.Book, authorID, bookID int) error
 	UpdateBookGenre(bookGenreID, genreID int) error
 	DeleteBook(id int) error
 	DeleteBookGenre(bookGenreID int) error
+	GetBookID(title string, author model.Author) (int, error)
 }
 
 type Services struct {

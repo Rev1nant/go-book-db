@@ -31,7 +31,7 @@ func (r *BookRepo) FindAll() ([]model.Book, error) {
 		if err != nil {
 			log.Println(err)
 		}
-		row, err := r.db.DB.Query(`SELECT name_genre FROM genre INNER JOIN book_genre USING(genre_id) INNER JOIN book USING(book_id) INNER JOIN author USING(author_id) WHERE title = $1, firstname_author = $2, lastname_author = $3 ;`, book.Title, book.Author.FirstName, book.Author.LastName)
+		row, err := r.db.DB.Query(`SELECT name_genre FROM genre INNER JOIN book_genre USING(genre_id) INNER JOIN book USING(book_id) INNER JOIN author USING(author_id) WHERE title = $1 AND firstname_author = $2 AND lastname_author = $3 ;`, book.Title, book.Author.FirstName, book.Author.LastName)
 		if err != nil {
 			return nil, err
 		}
@@ -86,8 +86,8 @@ func (r *BookRepo) FindByID(id int) (model.Book, error) {
 	return book, nil
 }
 
-func (r *BookRepo) Create(book model.Book, authorID int) error {
-	_, err := r.db.DB.Exec(`INSERT INTO book (title, author_id, price, amount) VALUES ($1, $2, $3, $4);`, book.Title, authorID, book.Price, book.Amount)
+func (r *BookRepo) Create(book model.Book) error {
+	_, err := r.db.DB.Exec(`INSERT INTO book (title, author_id, price, amount) VALUES ($3, (SELECT author_id FROM author WHERE firstname_author = $1 AND lastname_author = $2), $4, $5);`, book.Author.FirstName, book.Author.LastName, book.Title, book.Price, book.Amount)
 	if err != nil {
 		return err
 	}
@@ -138,4 +138,21 @@ func (r *BookRepo) DeleteGenre(bookGenreID int) error {
 	}
 
 	return nil
+}
+
+func (r *BookRepo) GetBookID(title string, author model.Author) (int, error) {
+	rows, err := r.db.DB.Query(`SELECT book_id FROM book INNER JOIN author USING(author_id) WHERE title = $1 AND firtname_author = $2 AND lastname_author`, title, author.FirstName, author.LastName)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	rows.Next()
+	var bookID int
+	err = rows.Scan(&bookID)
+	if err != nil {
+		return 0, err
+	}
+
+	return bookID, nil
 }

@@ -80,3 +80,20 @@ func (r *GenreRepo) Delete(id int) error {
 
 	return nil
 }
+
+func (r *GenreRepo) GetGenreID(genreName string) (int, error) {
+	rows, err := r.db.DB.Query(`SELECT genre_id FROM genre WHERE name_genre = $1`, genreName)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+
+	rows.Next()
+	var genreID int
+	err = rows.Scan(&genreID)
+	if err != nil {
+		return 0, err
+	}
+
+	return genreID, nil
+}

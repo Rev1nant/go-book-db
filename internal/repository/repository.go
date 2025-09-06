@@ -20,17 +20,19 @@ type Genre interface {
 	Create(genre model.Genre) error
 	Update(id int, genre model.Genre) error
 	Delete(id int) error
+	GetGenreID(genreName string) (int, error)
 }
 
 type Book interface {
 	FindAll() ([]model.Book, error)
 	FindByID(id int) (model.Book, error)
-	Create(book model.Book, authorID int) error
+	Create(book model.Book) error
 	AddGenre(bookID, genreID int) error
 	Update(book model.Book, authorID, bookID int) error
 	UpdateGenre(bookGenreID, genreID int) error
 	Delete(id int) error
 	DeleteGenre(bookGenreID int) error
+	GetBookID(title string, author model.Author) (int, error)
 }
 
 type Repositories struct {

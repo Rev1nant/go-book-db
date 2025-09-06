@@ -34,3 +34,7 @@ func (s *GenreService) UpdateGenre(id int, genre model.Genre) error {
 func (s *GenreService) DeleteGenre(id int) error {
 	return s.repo.Genre.Delete(id)
 }
+
+func (s *GenreService) GetGenreID(genreName string) (int, error) {
+	return s.repo.Genre.GetGenreID(genreName)
+}

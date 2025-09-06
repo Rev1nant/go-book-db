@@ -19,12 +19,17 @@ func App() http.Handler {
 	repo := repository.NewRepositories(db)
 	serv := service.NewServices(repo)
 	router := http.NewServeMux()
+
 	handler.NewAuthorHandler(router, handler.AuthorHandlers{
 		AuthorService: serv.Author,
 	})
 
 	handler.NewGenreHendler(router, handler.GenreHandlers{
 		GenreService: serv.Genre,
+	})
+
+	handler.NewBookHandler(router, handler.BookHandlers{
+		BookService: serv.Book,
 	})
 
 	return router

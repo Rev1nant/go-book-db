@@ -30,6 +30,7 @@ func (handler *AuthorHandlers) GetAllAuthor() http.HandlerFunc {
 		authors, err := handler.AuthorService.GetAllAuthor()
 		if err != nil {
 			res.Json(w, "Error 500", http.StatusInternalServerError)
+			return
 		}
 
 		res.Json(w, authors, http.StatusOK)
@@ -44,7 +45,7 @@ func (handler *AuthorHandlers) GetOneAuthor() http.HandlerFunc {
 
 		author, err := handler.AuthorService.GetOneAuthor(id)
 		if err != nil {
-			res.Json(w, "Error 404", http.StatusNotFound)
+			res.Json(w, "Error 500", http.StatusInternalServerError)
 			return
 		}
 
